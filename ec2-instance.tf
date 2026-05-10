@@ -22,7 +22,7 @@ resource "aws_security_group" "my-security-group" {
   description = "Allow SSH and HTTP traffic"
   vpc_id      = aws_default_vpc.default.id
   tags = {
-    Name = "Terraform Security Group"
+    Name        = "Terraform Security Group"
     Environment = var.env
   }
 
@@ -61,7 +61,7 @@ resource "aws_security_group" "my-security-group" {
 
 resource "aws_instance" "terraform_instance" {
   for_each = tomap({
-    
+
 
     web = "t3.micro"
     app = "t3.small"

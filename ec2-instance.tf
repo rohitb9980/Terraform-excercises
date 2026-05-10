@@ -58,8 +58,9 @@ resource "aws_security_group" "my-security-group" {
 resource "aws_instance" "terraform_instance" {
   for_each = tomap({
     
-    web = "t2.micro"
+    web = "t3.micro"
     app = "t3.small"
+    server = "c7i-flex.large"
 
   })
   depends_on = [ aws_security_group.my-security-group, aws_key_pair.terraform ]

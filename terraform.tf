@@ -7,9 +7,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "aarohit-rohitsheth-7479445555-007"
-    key            = "terraform.tfstate"
-    region         = "ap-south-1"
+    bucket       = "aarohit-rohitsheth-7479445555-007"
+    key          = "terraform.tfstate"
+    region       = "ap-south-1"
     use_lockfile = true
   }
 }

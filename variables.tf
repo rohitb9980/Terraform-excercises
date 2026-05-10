@@ -17,6 +17,6 @@ variable "aws_ami_id" {
 }
 
 variable "env" {
- default = "Prod"
- type = string  
+  default = "Prod"
+  type    = string
 }

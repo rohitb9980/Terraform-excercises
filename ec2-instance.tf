@@ -57,20 +57,20 @@ resource "aws_security_group" "my-security-group" {
 
 resource "aws_instance" "terraform_instance" {
   for_each = tomap({
-    
-    web = "t3.micro"
-    app = "t3.small"
+
+    web    = "t3.micro"
+    app    = "t3.small"
     server = "c7i-flex.large"
 
   })
-  depends_on = [ aws_security_group.my-security-group, aws_key_pair.terraform ]
+  depends_on      = [aws_security_group.my-security-group, aws_key_pair.terraform]
   ami             = var.aws_ami_id
   instance_type   = each.value
   key_name        = aws_key_pair.terraform.key_name
   security_groups = [aws_security_group.my-security-group.name]
   user_data       = file("automate-nginx.sh")
   tags = {
-    Name        = "each.key"
+    Name        = each.key
     Environment = var.env
     Description = "This is a Terraform-managed EC2 instance."
   }

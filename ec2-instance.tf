@@ -1,8 +1,11 @@
 ##### key pair for EC2 instance #####
 
 resource "aws_key_pair" "terraform" {
-  key_name   = "terraform-key"
+  key_name   = "${var.env}-terraform-key"
   public_key = file("terraform-key.pub")
+  tags = {
+    Environment = var.env
+  }
 
 }
 
@@ -15,11 +18,12 @@ resource "aws_default_vpc" "default" {
 }
 
 resource "aws_security_group" "my-security-group" {
-  name        = "terraform-automate-sg"
+  name        = "${var.env}-terraform-automate-sg"
   description = "Allow SSH and HTTP traffic"
   vpc_id      = aws_default_vpc.default.id
   tags = {
     Name = "Terraform Security Group"
+    Environment = var.env
   }
 
   ingress {
@@ -57,12 +61,16 @@ resource "aws_security_group" "my-security-group" {
 
 resource "aws_instance" "terraform_instance" {
   for_each = tomap({
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> d9791a1 (New changes)
     web = "t3.micro"
     app = "t3.small"
 
   })
-  depends_on = [ aws_security_group.my-security-group, aws_key_pair.terraform ]
+  depends_on      = [aws_security_group.my-security-group, aws_key_pair.terraform]
   ami             = var.aws_ami_id
   instance_type   = each.value
   key_name        = aws_key_pair.terraform.key_name

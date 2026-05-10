@@ -1,0 +1,74 @@
+##### key pair for EC2 instance #####
+
+resource "aws_key_pair" "terraform" {
+  key_name   = "${var.env}-terraform-key"
+  public_key = file("terraform-key.pub")
+  tags = {
+    Environment = var.env
+  }
+
+}
+
+######## VPC and Security Group for EC2 instance #####
+
+resource "aws_default_vpc" "default" {
+  tags = {
+    Name = "Default VPC"
+  }
+}
+
+resource "aws_security_group" "my-security-group" {
+  name        = "${var.env}-terraform-automate-sg"
+  description = "Allow SSH and HTTP traffic"
+  vpc_id      = aws_default_vpc.default.id
+  tags = {
+    Name        = "Terraform Security Group"
+    Environment = var.env
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow SSH from anywhere"
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow HTTP from anywhere"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
+  }
+}
+###### EC2 instance #####
+
+resource "aws_instance" "terraform_instance" {
+  count = var.instance_count
+  depends_on      = [aws_security_group.my-security-group, aws_key_pair.terraform]
+  ami             = var.aws_ami_id
+  instance_type   = var.instance_type
+  key_name        = aws_key_pair.terraform.key_name
+  security_groups = [aws_security_group.my-security-group.name]
+  user_data = file("${path.module}/automate-nginx.sh")
+  tags = {
+    Name        = "${var.env}-terraform-instance"
+    Environment = var.env
+    Description = "This is a Terraform-managed EC2 instance."
+  }
+  root_block_device {
+    volume_size = var.env == "Dev" ? 20 : 10
+    volume_type = "gp3"
+  }
+
+}
+

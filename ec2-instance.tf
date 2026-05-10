@@ -61,11 +61,8 @@ resource "aws_security_group" "my-security-group" {
 
 resource "aws_instance" "terraform_instance" {
   for_each = tomap({
-<<<<<<< HEAD
     
-=======
 
->>>>>>> d9791a1 (New changes)
     web = "t3.micro"
     app = "t3.small"
 

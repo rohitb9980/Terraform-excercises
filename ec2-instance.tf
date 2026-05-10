@@ -69,7 +69,7 @@ resource "aws_instance" "terraform_instance" {
   security_groups = [aws_security_group.my-security-group.name]
   user_data       = file("automate-nginx.sh")
   tags = {
-    Name        = "each.key"
+    Name        = each.key
     Environment = var.env
     Description = "This is a Terraform-managed EC2 instance."
   }
